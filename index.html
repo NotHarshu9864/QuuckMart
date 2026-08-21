@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#070b14">
+<title>QuickMart — Shop Online</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config={theme:{extend:{fontFamily:{sans:["Inter","system-ui","sans-serif"]}}}};</script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:#070b14;scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 10% 0%,rgba(37,99,235,.13),transparent 28%),radial-gradient(circle at 95% 40%,rgba(124,58,237,.09),transparent 28%),#070b14;color:#fff;font-family:Inter,system-ui,sans-serif;-webkit-user-select:none;user-select:none;padding-bottom:80px}input,textarea{-webkit-user-select:text;user-select:text}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#1e293b;border-radius:20px}.glass{background:rgba(15,23,42,.72);border:1px solid rgba(255,255,255,.07);backdrop-filter:blur(22px)}.navbar{background:rgba(7,11,20,.78);border-bottom:1px solid rgba(255,255,255,.06);backdrop-filter:blur(22px)}.logo-shadow{box-shadow:0 10px 30px rgba(37,99,235,.18)}.search-box{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);transition:.2s}.search-box:focus-within{border-color:rgba(59,130,246,.65);box-shadow:0 0 0 3px rgba(59,130,246,.08)}.search-input{background:transparent;outline:none;color:white}.search-input::placeholder{color:#64748b}.category-btn{white-space:nowrap;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);color:#94a3b8;transition:.2s}.category-btn.active{background:#2563eb;border-color:#2563eb;color:white}.hero{background:linear-gradient(135deg,rgba(37,99,235,.14),rgba(124,58,237,.08));border:1px solid rgba(255,255,255,.07)}.product-card{background:rgba(15,23,42,.62);border:1px solid rgba(255,255,255,.065);transition:.22s}.product-card:hover{transform:translateY(-3px);background:rgba(15,23,42,.86);border-color:rgba(59,130,246,.24)}.product-image{background:rgba(255,255,255,.035);overflow:hidden}.product-image img{transition:.35s}.product-card:hover .product-image img{transform:scale(1.045)}.add-btn{background:#2563eb;transition:.2s}.add-btn:hover{background:#3b82f6}.cart-badge{position:absolute;top:-5px;right:-6px;min-width:18px;height:18px;padding:0 4px;display:flex;align-items:center;justify-content:center;background:#2563eb;border:2px solid #070b14;border-radius:999px;font-size:9px;font-weight:700}.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.035),rgba(255,255,255,.075),rgba(255,255,255,.035));background-size:200% 100%;animation:skeleton 1.4s infinite}@keyframes skeleton{0%{background-position:200% 0}100%{background-position:-200% 0}}.bottom-nav{background:rgba(7,11,20,.9);border-top:1px solid rgba(255,255,255,.07);backdrop-filter:blur(20px)}.mobile-nav-item{color:#64748b}.mobile-nav-item.active{color:#60a5fa}.toast{position:fixed;left:50%;bottom:92px;transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:100;transition:.25s}.toast.show{opacity:1;transform:translate(-50%,0)}.discount{background:rgba(34,197,94,.10);color:#4ade80;border:1px solid rgba(34,197,94,.12)}@media(min-width:768px){body{padding-bottom:0}}
+</style>
+</head>
+<body>
+<header class="navbar sticky top-0 z-50"><div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"><div class="h-[68px] flex items-center justify-between gap-4">
+<a href="index.html" class="flex items-center gap-3 shrink-0"><div class="logo-shadow w-10 h-10 rounded-xl overflow-hidden border border-white/10"><img src="https://i.ibb.co/PZkRpfGx/image.png" alt="QuickMart" class="w-full h-full object-cover" draggable="false"></div><div class="hidden sm:block"><div class="font-bold text-[17px]">QuickMart</div><div class="text-[9px] uppercase tracking-[.18em] text-slate-500">Shop smart</div></div></a>
+<div class="hidden md:flex flex-1 max-w-xl"><div class="search-box w-full h-11 rounded-xl flex items-center px-4 gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="desktopSearch" type="search" class="search-input w-full text-sm" placeholder="Search products..." autocomplete="off"></div></div>
+<div class="flex items-center gap-2"><button id="accountButton" class="hidden sm:flex items-center gap-2 h-10 px-3 rounded-xl hover:bg-white/[.05]"><div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">👤</div><div class="text-left"><div id="accountName" class="text-xs font-medium max-w-[100px] truncate">Account</div><div class="text-[9px] text-slate-500">My account</div></div></button><button id="cartButton" class="relative w-10 h-10 rounded-xl hover:bg-white/[.05] flex items-center justify-center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span id="cartBadge" class="cart-badge hidden">0</span></button></div>
+</div></div></header>
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+<div class="md:hidden mb-5"><div class="search-box h-11 rounded-xl flex items-center px-4 gap-3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="mobileSearch" type="search" class="search-input w-full text-sm" placeholder="Search products..." autocomplete="off"></div></div>
+<section class="hero rounded-2xl sm:rounded-3xl p-6 sm:p-10 mb-7 overflow-hidden relative"><div class="relative z-10 max-w-xl"><div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/15 text-blue-400 text-[10px] font-semibold uppercase tracking-wider mb-4"><span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>Welcome to QuickMart</div><h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.08]">Everything you need, <span class="text-blue-400">in one place.</span></h1><p class="text-sm sm:text-base text-slate-400 mt-4 max-w-md leading-6">Discover quality products at great prices. Browse our collection and order what you love.</p><button id="shopNowButton" class="mt-6 h-11 px-5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold">Shop now</button></div><div class="absolute -right-16 -bottom-24 w-72 h-72 rounded-full border border-blue-500/10"></div><div class="absolute -right-5 -bottom-12 w-48 h-48 rounded-full border border-blue-500/10"></div></section>
+<section class="mb-8"><h2 class="text-lg font-bold mb-3">Categories</h2><div id="categories" class="flex gap-2 overflow-x-auto pb-2"><button data-category="all" class="category-btn active px-4 py-2 rounded-xl text-xs font-medium">All products</button></div></section>
+<section id="featuredSection" class="mb-9 hidden"><div class="mb-4"><h2 class="text-lg sm:text-xl font-bold">Featured products</h2><p class="text-xs text-slate-500 mt-1">Handpicked for you</p></div><div id="featuredProducts" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"></div></section>
+<section id="productsSection"><div class="flex items-center justify-between mb-4"><div><h2 id="productsTitle" class="text-lg sm:text-xl font-bold">All products</h2><p id="productsSubtitle" class="text-xs text-slate-500 mt-1">Browse our latest collection</p></div><span id="productCount" class="text-[11px] text-slate-600"></span></div>
+<div id="loadingGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"><div class="glass rounded-2xl overflow-hidden"><div class="skeleton aspect-square"></div><div class="p-3"><div class="skeleton h-3 rounded w-3/4 mb-2"></div><div class="skeleton h-3 rounded w-1/2"></div></div></div><div class="glass rounded-2xl overflow-hidden"><div class="skeleton aspect-square"></div><div class="p-3"><div class="skeleton h-3 rounded w-3/4 mb-2"></div><div class="skeleton h-3 rounded w-1/2"></div></div></div><div class="glass rounded-2xl overflow-hidden"><div class="skeleton aspect-square"></div><div class="p-3"><div class="skeleton h-3 rounded w-3/4 mb-2"></div><div class="skeleton h-3 rounded w-1/2"></div></div></div><div class="glass rounded-2xl overflow-hidden"><div class="skeleton aspect-square"></div><div class="p-3"><div class="skeleton h-3 rounded w-3/4 mb-2"></div><div class="skeleton h-3 rounded w-1/2"></div></div></div></div>
+<div id="productsGrid" class="hidden grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"></div>
+<div id="emptyState" class="hidden py-16 text-center"><div class="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center mb-4 bg-white/[.045] border border-white/[.07]">⌕</div><h3 class="font-semibold text-slate-300">No products found</h3><p class="text-xs text-slate-600 mt-2">Try a different search or category.</p></div>
+<div id="errorState" class="hidden py-16 text-center"><div class="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center mb-4 bg-white/[.045] border border-white/[.07]">⚠</div><h3 class="font-semibold text-slate-300">Couldn't load products</h3><p class="text-xs text-slate-600 mt-2">Please check your connection and try again.</p><button id="retryButton" class="mt-4 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold">Try again</button></div>
+</section></main>
+<nav class="bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 h-[70px]"><div class="max-w-lg mx-auto h-full grid grid-cols-4"><button data-nav="home" class="mobile-nav-item active flex flex-col items-center justify-center gap-1">⌂<span class="text-[9px]">Home</span></button><button id="mobileSearchButton" class="mobile-nav-item flex flex-col items-center justify-center gap-1">⌕<span class="text-[9px]">Search</span></button><button id="mobileCartButton" class="mobile-nav-item relative flex flex-col items-center justify-center gap-1">🛒<span class="text-[9px]">Cart</span><span id="mobileCartBadge" class="cart-badge hidden top-2 right-[calc(50%-22px)]">0</span></button><button id="mobileAccountButton" class="mobile-nav-item flex flex-col items-center justify-center gap-1">👤<span class="text-[9px]">Account</span></button></div></nav>
+<div id="toast" class="toast glass rounded-xl px-4 py-3 flex items-center gap-3 shadow-2xl"><span id="toastText" class="text-xs font-medium text-slate-200">Added to cart</span></div>
+
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import{getFirestore,collection,getDocs,query,where}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyBW83KNFkARuubDtjC0Kgy9cBU99GQCsIQ",authDomain:"imkrishna.firebaseapp.com",projectId:"imkrishna",storageBucket:"imkrishna.firebasestorage.app",messagingSenderId:"66739016952",appId:"1:66739016952:web:a02c18cb7fe85b763cd70d"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+let currentUser=null,allProducts=[],filteredProducts=[],selectedCategory="all",searchTerm="";
+let cart=JSON.parse(localStorage.getItem("quickmart_cart")||"[]");
+
+const productsGrid=document.getElementById("productsGrid"),featuredProducts=document.getElementById("featuredProducts"),featuredSection=document.getElementById("featuredSection"),loadingGrid=document.getElementById("loadingGrid"),emptyState=document.getElementById("emptyState"),errorState=document.getElementById("errorState"),productCount=document.getElementById("productCount"),productsTitle=document.getElementById("productsTitle"),productsSubtitle=document.getElementById("productsSubtitle"),categories=document.getElementById("categories"),cartBadge=document.getElementById("cartBadge"),mobileCartBadge=document.getElementById("mobileCartBadge"),toast=document.getElementById("toast"),toastText=document.getElementById("toastText");
+
+onAuthStateChanged(auth,async user=>{
+ if(!user){window.location.replace("login.html");return}
+ currentUser=user;
+ document.getElementById("accountName").textContent=user.displayName||user.email?.split("@")[0]||"Account";
+ await loadProducts();updateCartUI();
+});
+
+async function loadProducts(){
+ showLoading();
+ try{
+  const snap=await getDocs(query(collection(db,"products"),where("active","==",true)));
+  allProducts=[];snap.forEach(d=>allProducts.push({id:d.id,...d.data()}));
+  allProducts.sort((a,b)=>(a.featured===b.featured?0:a.featured?-1:1));
+  buildCategories();applyFilters();renderFeatured();
+ }catch(e){console.error(e);showError()}
+}
+function buildCategories(){
+ const set=new Set(allProducts.map(p=>p.category).filter(v=>typeof v==="string"&&v.trim()));
+ categories.innerHTML="";addCategoryButton("all","All products");
+ [...set].sort().forEach(c=>addCategoryButton(c,c));
+}
+function addCategoryButton(value,label){
+ const b=document.createElement("button");b.type="button";b.dataset.category=value;b.className="category-btn px-4 py-2 rounded-xl text-xs font-medium";
+ if(value===selectedCategory)b.classList.add("active");b.textContent=label;
+ b.onclick=()=>{selectedCategory=value;document.querySelectorAll(".category-btn").forEach(x=>x.classList.toggle("active",x.dataset.category===value));applyFilters()};
+ categories.appendChild(b);
+}
+function applyFilters(){
+ filteredProducts=allProducts.filter(p=>{
+  const cm=selectedCategory==="all"||String(p.category||"").toLowerCase()===selectedCategory.toLowerCase();
+  const text=(p.name||"")+" "+(p.description||"")+" "+(p.category||"");
+  return cm&&(!searchTerm||text.toLowerCase().includes(searchTerm.toLowerCase()));
+ });
+ renderProducts();
+}
+function handleSearch(v){searchTerm=v.trim();document.getElementById("desktopSearch").value=v;document.getElementById("mobileSearch").value=v;applyFilters()}
+document.getElementById("desktopSearch").oninput=e=>handleSearch(e.target.value);
+document.getElementById("mobileSearch").oninput=e=>handleSearch(e.target.value);
+
+function renderProducts(){
+ loadingGrid.classList.add("hidden");productsGrid.classList.add("hidden");productsGrid.classList.remove("grid");emptyState.classList.add("hidden");
+ productCount.textContent=`${filteredProducts.length} ${filteredProducts.length===1?"product":"products"}`;
+ productsTitle.textContent=searchTerm?"Search results":selectedCategory!=="all"?selectedCategory:"All products";
+ productsSubtitle.textContent=searchTerm?`Results for "${searchTerm}"`:selectedCategory!=="all"?"Products in this category":"Browse our latest collection";
+ if(!filteredProducts.length){emptyState.classList.remove("hidden");return}
+ productsGrid.innerHTML=filteredProducts.map(createProductCard).join("");productsGrid.classList.remove("hidden");productsGrid.classList.add("grid");
+}
+function renderFeatured(){
+ const featured=allProducts.filter(p=>p.featured===true).slice(0,4);
+ if(!featured.length){featuredSection.classList.add("hidden");return}
+ featuredSection.classList.remove("hidden");featuredProducts.innerHTML=featured.map(createProductCard).join("");
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function money(n){return Number(n||0).toLocaleString("en-IN")}
+function createProductCard(p){
+ const name=esc(p.name||"Unnamed product"),image=esc(p.image||""),price=Number(p.price||0),mrp=Number(p.mrp||0),stock=Number(p.stock??0),discount=mrp>price?Math.round((mrp-price)/mrp*100):0,out=stock<=0;
+ return `<article class="product-card rounded-2xl overflow-hidden"><button type="button" class="product-open w-full text-left" data-id="${esc(p.id)}"><div class="product-image aspect-square relative">${image?`<img src="${image}" alt="${name}" loading="lazy" class="w-full h-full object-cover" draggable="false" onerror="this.style.display='none'">`:`<div class="absolute inset-0 flex items-center justify-center text-slate-600">No image</div>`}${discount?`<span class="discount absolute top-2 left-2 px-2 py-1 rounded-lg text-[9px] font-bold">${discount}% OFF</span>`:""}${out?`<div class="absolute inset-0 bg-black/45 flex items-center justify-center"><span class="px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-[10px] font-semibold text-slate-300">Out of stock</span></div>`:""}</div><div class="p-3 pb-1"><div class="text-[9px] uppercase tracking-wider text-slate-600 mb-1">${esc(p.category||"Product")}</div><h3 class="text-xs sm:text-sm font-semibold text-slate-200 line-clamp-2 leading-5 min-h-[40px]">${name}</h3></div></button><div class="px-3 pb-3 flex items-end justify-between gap-2"><div><div class="text-sm sm:text-base font-bold">₹${money(price)}</div>${mrp>price?`<div class="text-[10px] text-slate-600 line-through">₹${money(mrp)}</div>`:""}</div><button type="button" class="add-btn shrink-0 w-9 h-9 rounded-xl flex items-center justify-center ${out?"opacity-40 cursor-not-allowed":""}" data-add-id="${esc(p.id)}" ${out?"disabled":""}>＋</button></div></article>`;
+}
+document.addEventListener("click",e=>{
+ const add=e.target.closest("[data-add-id]");
+ if(add){e.preventDefault();e.stopPropagation();addToCart(add.dataset.addId);return}
+ const product=e.target.closest("[data-id]");if(product)window.location.href=`product.html?id=${encodeURIComponent(product.dataset.id)}`;
+});
+function addToCart(id){
+ const p=allProducts.find(x=>x.id===id);if(!p)return;const stock=Number(p.stock??0);if(stock<=0)return showToast("This product is out of stock");
+ const ex=cart.find(x=>x.id===id);if(ex){if(ex.quantity>=stock)return showToast("Maximum available quantity reached");ex.quantity++}else cart.push({id,quantity:1});
+ localStorage.setItem("quickmart_cart",JSON.stringify(cart));updateCartUI();showToast("Added to cart");
+}
+function updateCartUI(){
+ const count=cart.reduce((t,x)=>t+Number(x.quantity||0),0);
+ [cartBadge,mobileCartBadge].forEach(b=>{b.classList.toggle("hidden",count<=0);b.textContent=count>99?"99+":count});
+}
+let toastTimer;function showToast(t){toastText.textContent=t;toast.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove("show"),2200)}
+function showLoading(){loadingGrid.classList.remove("hidden");productsGrid.classList.add("hidden");emptyState.classList.add("hidden");errorState.classList.add("hidden")}
+function showError(){loadingGrid.classList.add("hidden");productsGrid.classList.add("hidden");emptyState.classList.add("hidden");errorState.classList.remove("hidden")}
+document.getElementById("retryButton").onclick=loadProducts;
+document.getElementById("cartButton").onclick=()=>location.href="cart.html";
+document.getElementById("mobileCartButton").onclick=()=>location.href="cart.html";
+document.getElementById("accountButton").onclick=()=>location.href="account.html";
+document.getElementById("mobileAccountButton").onclick=()=>location.href="account.html";
+document.getElementById("mobileSearchButton").onclick=()=>{document.getElementById("mobileSearch").focus();scrollTo({top:0,behavior:"smooth"})};
+document.getElementById("shopNowButton").onclick=()=>document.getElementById("productsSection").scrollIntoView({behavior:"smooth"});
+document.querySelector('[data-nav="home"]').onclick=()=>scrollTo({top:0,behavior:"smooth"});
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("dragstart",e=>e.preventDefault());
+document.addEventListener("selectstart",e=>{if(!["INPUT","TEXTAREA"].includes(e.target.tagName))e.preventDefault()});
+document.addEventListener("keydown",e=>{const k=e.key.toLowerCase(),tag=document.activeElement?.tagName;if((e.ctrlKey||e.metaKey)&&["c","u","s","a"].includes(k)&&!["INPUT","TEXTAREA"].includes(tag))e.preventDefault();if(e.key==="F12"&&!["INPUT","TEXTAREA"].includes(tag))e.preventDefault()});
+</script>
+</body>
+</html>
