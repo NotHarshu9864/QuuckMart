@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta name="theme-color" content="#070b14">
+    <meta name="description" content="Create your QuickMart account.">
+
+    <title>Create Account — QuickMart</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            background: #070b14;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 15% 10%,
+                    rgba(37, 99, 235, 0.18),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(124, 58, 237, 0.14),
+                    transparent 30%
+                ),
+                #070b14;
+
+            color: #fff;
+            font-family: Inter, system-ui, sans-serif;
+
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        input {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            user-select: text;
+        }
+
+        .page-glow {
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        .glow-one {
+            top: -100px;
+            left: -100px;
+            background: rgba(37, 99, 235, 0.08);
+        }
+
+        .glow-two {
+            right: -100px;
+            bottom: -100px;
+            background: rgba(124, 58, 237, 0.08);
+        }
+
+        .register-card {
+            background: rgba(15, 23, 42, 0.76);
+
+            border: 1px solid rgba(255, 255, 255, 0.075);
+
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input {
+            width: 100%;
+            height: 52px;
+
+            padding: 0 15px;
+
+            border-radius: 13px;
+
+            border: 1px solid rgba(148, 163, 184, 0.14);
+
+            background: rgba(255, 255, 255, 0.045);
+
+            color: #fff;
+
+            outline: none;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+        .input:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .input:focus {
+            border-color: rgba(59, 130, 246, .8);
+
+            background: rgba(255, 255, 255, 0.06);
+
+            box-shadow:
+                0 0 0 3px rgba(59, 130, 246, .11);
+        }
+
+        .input.error {
+            border-color: rgba(239, 68, 68, .75);
+
+            box-shadow:
+                0 0 0 3px rgba(239, 68, 68, .08);
+        }
+
+        .input::placeholder {
+            color: #64748b;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            right: 12px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 34px;
+            height: 34px;
+
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #64748b;
+
+            transition: .2s;
+        }
+
+        .password-toggle:hover {
+            background: rgba(255,255,255,.06);
+            color: #cbd5e1;
+        }
+
+        .register-button {
+            height: 52px;
+
+            border-radius: 13px;
+
+            background: #2563eb;
+
+            box-shadow:
+                0 10px 25px rgba(37, 99, 235, .20);
+
+            transition:
+                transform .2s ease,
+                background .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .register-button:hover {
+            background: #3b82f6;
+
+            box-shadow:
+                0 14px 30px rgba(37, 99, 235, .25);
+
+            transform: translateY(-1px);
+        }
+
+        .register-button:active {
+            transform: translateY(0);
+        }
+
+        .register-button:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 19px;
+            height: 19px;
+
+            border-radius: 50%;
+
+            border: 2px solid rgba(255,255,255,.3);
+            border-top-color: white;
+
+            animation: spin .7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message {
+            animation: messageIn .2s ease;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-box {
+            box-shadow:
+                0 12px 30px rgba(37, 99, 235, .16);
+        }
+
+        .link {
+            color: #60a5fa;
+            transition: color .2s ease;
+        }
+
+        .link:hover {
+            color: #93c5fd;
+        }
+
+        .field-error {
+            color: #f87171;
+            font-size: 12px;
+            margin-top: 7px;
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+
+        .password-strength {
+            height: 3px;
+            width: 100%;
+
+            background: rgba(255,255,255,.07);
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+            margin-top: 9px;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+
+            border-radius: 10px;
+
+            transition:
+                width .25s ease,
+                background .25s ease;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+
+
+    <main class="relative min-h-screen flex items-center justify-center px-5 py-10">
+
+        <section class="w-full max-w-[430px]">
+
+            <!-- BRAND -->
+
+            <div class="text-center mb-7">
+
+                <div class="logo-box inline-flex w-[72px] h-[72px] rounded-[20px] overflow-hidden bg-white/5 border border-white/10 mb-5">
+
+                    <img
+                        src="https://i.ibb.co/PZkRpfGx/image.png"
+                        alt="QuickMart"
+                        class="w-full h-full object-cover"
+                        draggable="false"
+                    >
+
+                </div>
+
+
+                <h1 class="text-[28px] sm:text-[30px] font-bold tracking-tight">
+                    Create your account
+                </h1>
+
+
+                <p class="text-sm text-slate-400 mt-2">
+                    Join QuickMart and start shopping
+                </p>
+
+            </div>
+
+
+            <!-- REGISTER CARD -->
+
+            <div class="register-card rounded-[22px] p-6 sm:p-8">
+
+                <form id="registerForm" novalidate>
+
+
+                    <!-- NAME -->
+
+                    <div class="mb-5">
+
+                        <label
+                            for="name"
+                            class="block text-[13px] font-medium text-slate-300 mb-2"
+                        >
+                            Full name
+                        </label>
+
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="name"
+                                type="text"
+                                autocomplete="name"
+                                class="input"
+                                placeholder="Enter your full name"
+                                maxlength="80"
+                                required
+                                spellcheck="false"
+                            >
+
+                        </div>
+
+
+                        <p id="nameError" class="field-error">
+                            Please enter your name.
+                        </p>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="mb-5">
+
+                        <label
+                            for="email"
+                            class="block text-[13px] font-medium text-slate-300 mb-2"
+                        >
+                            Email address
+                        </label>
+
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="email"
+                                type="email"
+                                inputmode="email"
+                                autocomplete="email"
+                                class="input"
+                                placeholder="you@example.com"
+                                maxlength="254"
+                                required
+                                spellcheck="false"
+                            >
+
+                        </div>
+
+
+                        <p id="emailError" class="field-error">
+                            Please enter a valid email address.
+                        </p>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="mb-5">
+
+                        <label
+                            for="password"
+                            class="block text-[13px] font-medium text-slate-300 mb-2"
+                        >
+                            Password
+                        </label>
+
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="password"
+                                type="password"
+                                autocomplete="new-password"
+                                class="input pr-12"
+                                placeholder="Create a password"
+                                maxlength="128"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="password-toggle"
+                                aria-label="Show password"
+                            >
+
+                                <svg
+                                    id="eyeIcon"
+                                    width="19"
+                                    height="19"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/>
+                                    <circle cx="12" cy="12" r="2.5"/>
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+
+                        <div class="password-strength">
+                            <div
+                                id="strengthBar"
+                                class="password-strength-bar"
+                            ></div>
+                        </div>
+
+
+                        <p
+                            id="passwordHint"
+                            class="text-[11px] text-slate-600 mt-2"
+                        >
+                            Use at least 6 characters.
+                        </p>
+
+
+                        <p id="passwordError" class="field-error">
+                            Password must contain at least 6 characters.
+                        </p>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="mb-5">
+
+                        <label
+                            for="confirmPassword"
+                            class="block text-[13px] font-medium text-slate-300 mb-2"
+                        >
+                            Confirm password
+                        </label>
+
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="confirmPassword"
+                                type="password"
+                                autocomplete="new-password"
+                                class="input pr-12"
+                                placeholder="Enter your password again"
+                                maxlength="128"
+                                required
+                            >
+
+
+                            <button
+                                type="button"
+                                id="toggleConfirmPassword"
+                                class="password-toggle"
+                                aria-label="Show password"
+                            >
+
+                                <svg
+                                    width="19"
+                                    height="19"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/>
+                                    <circle cx="12" cy="12" r="2.5"/>
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+
+                        <p id="confirmError" class="field-error">
+                            Passwords do not match.
+                        </p>
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div
+                        id="message"
+                        class="message hidden rounded-xl px-4 py-3 mb-5 text-sm border"
+                    ></div>
+
+
+                    <!-- REGISTER BUTTON -->
+
+                    <button
+                        id="registerButton"
+                        type="submit"
+                        class="register-button w-full flex items-center justify-center gap-2 text-sm font-semibold"
+                    >
+
+                        <span id="buttonText">
+                            Create account
+                        </span>
+
+                        <span
+                            id="buttonSpinner"
+                            class="spinner hidden"
+                        ></span>
+
+                    </button>
+
+                </form>
+
+
+                <!-- LOGIN -->
+
+                <div class="flex items-center gap-3 my-7">
+
+                    <div class="h-px flex-1 bg-white/[0.07]"></div>
+
+                    <span class="text-[11px] text-slate-600 uppercase tracking-wider">
+                        Already a member?
+                    </span>
+
+                    <div class="h-px flex-1 bg-white/[0.07]"></div>
+
+                </div>
+
+
+                <a
+                    href="login.html"
+                    class="w-full h-[50px] rounded-[13px] border border-white/[0.09] bg-white/[0.025] hover:bg-white/[0.05] flex items-center justify-center text-sm font-medium text-slate-200 transition"
+                >
+                    Sign in
+                </a>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <p class="text-center text-[11px] text-slate-600 mt-6">
+                © 2026 QuickMart. All rights reserved.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- FIREBASE -->
+
+    <script type="module">
+
+        import { initializeApp } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+        import {
+            getAuth,
+            createUserWithEmailAndPassword,
+            updateProfile,
+            onAuthStateChanged
+        } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+        import {
+            getFirestore,
+            doc,
+            setDoc,
+            serverTimestamp
+        } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+        /* ==========================================
+           QUICKMART FIREBASE CONFIG
+        ========================================== */
+
+        const firebaseConfig = {
+
+            apiKey: "AIzaSyBW83KNFkARuubDtJc0Kgy9cBU99GQCsIQ",
+
+            authDomain: "imkrishna.firebaseapp.com",
+
+            projectId: "imkrishna",
+
+            storageBucket: "imkrishna.firebasestorage.app",
+
+            messagingSenderId: "66739016952",
+
+            appId: "1:66739016952:web:a02c18cb7fe85b763cd70d"
+
+        };
+
+
+        /* ==========================================
+           INITIALIZE FIREBASE
+        ========================================== */
+
+        const app = initializeApp(firebaseConfig);
+
+        const auth = getAuth(app);
+
+        const db = getFirestore(app);
+
+
+        /* ==========================================
+           ELEMENTS
+        ========================================== */
+
+        const form =
+            document.getElementById("registerForm");
+
+        const nameInput =
+            document.getElementById("name");
+
+        const emailInput =
+            document.getElementById("email");
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const confirmInput =
+            document.getElementById("confirmPassword");
+
+        const registerButton =
+            document.getElementById("registerButton");
+
+        const buttonText =
+            document.getElementById("buttonText");
+
+        const buttonSpinner =
+            document.getElementById("buttonSpinner");
+
+        const message =
+            document.getElementById("message");
+
+        const nameError =
+            document.getElementById("nameError");
+
+        const emailError =
+            document.getElementById("emailError");
+
+        const passwordError =
+            document.getElementById("passwordError");
+
+        const confirmError =
+            document.getElementById("confirmError");
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+        const toggleConfirmPassword =
+            document.getElementById("toggleConfirmPassword");
+
+        const eyeIcon =
+            document.getElementById("eyeIcon");
+
+        const strengthBar =
+            document.getElementById("strengthBar");
+
+        const passwordHint =
+            document.getElementById("passwordHint");
+
+
+        /* ==========================================
+           MESSAGE
+        ========================================== */
+
+        function showMessage(text, type = "error") {
+
+            message.textContent = text;
+
+            message.classList.remove(
+                "hidden",
+                "bg-red-500/10",
+                "border-red-500/20",
+                "text-red-400",
+                "bg-green-500/10",
+                "border-green-500/20",
+                "text-green-400"
+            );
+
+
+            if (type === "success") {
+
+                message.classList.add(
+                    "bg-green-500/10",
+                    "border-green-500/20",
+                    "text-green-400"
+                );
+
+            } else {
+
+                message.classList.add(
+                    "bg-red-500/10",
+                    "border-red-500/20",
+                    "text-red-400"
+                );
+
+            }
+
+        }
+
+
+        function hideMessage() {
+
+            message.classList.add("hidden");
+
+        }
+
+
+        /* ==========================================
+           FIREBASE ERRORS
+        ========================================== */
+
+        function getFirebaseError(error) {
+
+            switch (error.code) {
+
+                case "auth/email-already-in-use":
+                    return "An account with this email already exists.";
+
+                case "auth/invalid-email":
+                    return "Please enter a valid email address.";
+
+                case "auth/weak-password":
+                    return "Your password is too weak. Use at least 6 characters.";
+
+                case "auth/network-request-failed":
+                    return "Network error. Please check your connection.";
+
+                case "auth/operation-not-allowed":
+                    return "Email/password registration is not enabled in Firebase.";
+
+                case "auth/too-many-requests":
+                    return "Too many attempts. Please try again later.";
+
+                default:
+                    return "Unable to create your account. Please try again.";
+
+            }
+
+        }
+
+
+        /* ==========================================
+           FIELD HELPERS
+        ========================================== */
+
+        function setFieldError(
+            input,
+            errorElement,
+            state
+        ) {
+
+            input.classList.toggle(
+                "error",
+                state
+            );
+
+            errorElement.classList.toggle(
+                "show",
+                state
+            );
+
+        }
+
+
+        /* ==========================================
+           VALIDATION
+        ========================================== */
+
+        function validateName() {
+
+            const value =
+                nameInput.value.trim();
+
+            const valid =
+                value.length >= 2;
+
+            setFieldError(
+                nameInput,
+                nameError,
+                !valid
+            );
+
+            return valid;
+
+        }
+
+
+        function validateEmail() {
+
+            const value =
+                emailInput.value.trim();
+
+            const valid =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+            setFieldError(
+                emailInput,
+                emailError,
+                !valid
+            );
+
+            return valid;
+
+        }
+
+
+        function validatePassword() {
+
+            const valid =
+                passwordInput.value.length >= 6;
+
+            setFieldError(
+                passwordInput,
+                passwordError,
+                !valid
+            );
+
+            return valid;
+
+        }
+
+
+        function validateConfirmPassword() {
+
+            const valid =
+                confirmInput.value.length > 0 &&
+                confirmInput.value === passwordInput.value;
+
+            setFieldError(
+                confirmInput,
+                confirmError,
+                !valid
+            );
+
+            return valid;
+
+        }
+
+
+        /* ==========================================
+           PASSWORD STRENGTH
+        ========================================== */
+
+        function updatePasswordStrength() {
+
+            const password =
+                passwordInput.value;
+
+            let strength = 0;
+
+
+            if (password.length >= 6) {
+                strength++;
+            }
+
+            if (/[A-Z]/.test(password)) {
+                strength++;
+            }
+
+            if (/[0-9]/.test(password)) {
+                strength++;
+            }
+
+            if (/[^A-Za-z0-9]/.test(password)) {
+                strength++;
+            }
+
+
+            const width =
+                strength * 25;
+
+            strengthBar.style.width =
+                width + "%";
+
+
+            if (strength === 0) {
+
+                strengthBar.style.background =
+                    "transparent";
+
+                passwordHint.textContent =
+                    "Use at least 6 characters.";
+
+            }
+
+            else if (strength === 1) {
+
+                strengthBar.style.background =
+                    "#ef4444";
+
+                passwordHint.textContent =
+                    "Weak password.";
+
+            }
+
+            else if (strength === 2) {
+
+                strengthBar.style.background =
+                    "#f59e0b";
+
+                passwordHint.textContent =
+                    "Fair password.";
+
+            }
+
+            else if (strength === 3) {
+
+                strengthBar.style.background =
+                    "#eab308";
+
+                passwordHint.textContent =
+                    "Good password.";
+
+            }
+
+            else {
+
+                strengthBar.style.background =
+                    "#22c55e";
+
+                passwordHint.textContent =
+                    "Strong password.";
+
+            }
+
+        }
+
+
+        passwordInput.addEventListener(
+            "input",
+            () => {
+
+                updatePasswordStrength();
+
+                if (passwordInput.value) {
+
+                    passwordInput.classList.remove(
+                        "error"
+                    );
+
+                    passwordError.classList.remove(
+                        "show"
+                    );
+
+                }
+
+                if (confirmInput.value) {
+
+                    validateConfirmPassword();
+
+                }
+
+                hideMessage();
+
+            }
+        );
+
+
+        nameInput.addEventListener(
+            "input",
+            () => {
+
+                if (nameInput.value.trim()) {
+
+                    nameInput.classList.remove(
+                        "error"
+                    );
+
+                    nameError.classList.remove(
+                        "show"
+                    );
+
+                }
+
+                hideMessage();
+
+            }
+        );
+
+
+        emailInput.addEventListener(
+            "input",
+            () => {
+
+                if (emailInput.value.trim()) {
+
+                    emailInput.classList.remove(
+                        "error"
+                    );
+
+                    emailError.classList.remove(
+                        "show"
+                    );
+
+                }
+
+                hideMessage();
+
+            }
+        );
+
+
+        confirmInput.addEventListener(
+            "input",
+            () => {
+
+                if (
+                    confirmInput.value ===
+                    passwordInput.value
+                ) {
+
+                    confirmInput.classList.remove(
+                        "error"
+                    );
+
+                    confirmError.classList.remove(
+                        "show"
+                    );
+
+                }
+
+                hideMessage();
+
+            }
+        );
+
+
+        /* ==========================================
+           PASSWORD VISIBILITY
+        ========================================== */
+
+        function toggleVisibility(
+            input,
+            button
+        ) {
+
+            const hidden =
+                input.type === "password";
+
+            input.type =
+                hidden ? "text" : "password";
+
+            button.setAttribute(
+                "aria-label",
+                hidden
+                    ? "Hide password"
+                    : "Show password"
+            );
+
+        }
+
+
+        togglePassword.addEventListener(
+            "click",
+            () => {
+
+                toggleVisibility(
+                    passwordInput,
+                    togglePassword
+                );
+
+                eyeIcon.innerHTML =
+                    passwordInput.type === "text"
+
+                    ? `
+                        <path d="M3 3l18 18"/>
+                        <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                        <path d="M9.9 4.2A10.7 10.7 0 0 1 12 4c6.5 0 10 8 10 8a18.4 18.4 0 0 1-3.2 4.5"/>
+                        <path d="M6.2 6.2C3.4 8.1 2 12 2 12s3.5 8 10 8c1.5 0 2.8-.3 4-.8"/>
+                    `
+
+                    : `
+                        <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/>
+                        <circle cx="12" cy="12" r="2.5"/>
+                    `;
+
+            }
+        );
+
+
+        toggleConfirmPassword.addEventListener(
+            "click",
+            () => {
+
+                toggleVisibility(
+                    confirmInput,
+                    toggleConfirmPassword
+                );
+
+            }
+        );
+
+
+        /* ==========================================
+           LOADING
+        ========================================== */
+
+        function setLoading(loading) {
+
+            registerButton.disabled =
+                loading;
+
+            buttonText.textContent =
+                loading
+                    ? "Creating account..."
+                    : "Create account";
+
+            buttonSpinner.classList.toggle(
+                "hidden",
+                !loading
+            );
+
+        }
+
+
+        /* ==========================================
+           REGISTER
+        ========================================== */
+
+        form.addEventListener(
+            "submit",
+            async (event) => {
+
+                event.preventDefault();
+
+                hideMessage();
+
+
+                const validName =
+                    validateName();
+
+                const validEmail =
+                    validateEmail();
+
+                const validPassword =
+                    validatePassword();
+
+                const validConfirm =
+                    validateConfirmPassword();
+
+
+                if (
+                    !validName ||
+                    !validEmail ||
+                    !validPassword ||
+                    !validConfirm
+                ) {
+
+                    return;
+
+                }
+
+
+                setLoading(true);
+
+
+                try {
+
+                    /*
+                     * Create Firebase Authentication account
+                     */
+
+                    const result =
+                        await createUserWithEmailAndPassword(
+                            auth,
+                            emailInput.value.trim(),
+                            passwordInput.value
+                        );
+
+
+                    const user =
+                        result.user;
+
+
+                    /*
+                     * Save display name
+                     */
+
+                    await updateProfile(
+                        user,
+                        {
+                            displayName:
+                                nameInput.value.trim()
+                        }
+                    );
+
+
+                    /*
+                     * Create Firestore user profile
+                     */
+
+                    await setDoc(
+                        doc(
+                            db,
+                            "users",
+                            user.uid
+                        ),
+                        {
+
+                            name:
+                                nameInput.value.trim(),
+
+                            email:
+                                user.email,
+
+                            phone: "",
+
+                            role: "customer",
+
+                            createdAt:
+                                serverTimestamp()
+
+                        }
+                    );
+
+
+                    showMessage(
+                        "Account created successfully. Redirecting...",
+                        "success"
+                    );
+
+
+                    setTimeout(
+                        () => {
+
+                            window.location.replace(
+                                "index.html"
+                            );
+
+                        },
+                        700
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Registration error:",
+                        error
+                    );
+
+
+                    showMessage(
+                        getFirebaseError(error)
+                    );
+
+
+                    setLoading(false);
+
+                }
+
+            }
+        );
+
+
+        /* ==========================================
+           EXISTING SESSION
+        ========================================== */
+
+        onAuthStateChanged(
+            auth,
+            (user) => {
+
+                if (user) {
+
+                    window.location.replace(
+                        "index.html"
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* ==========================================
+           UI RESTRICTIONS
+        ========================================== */
+
+        /*
+         * Disable right click
+         */
+
+        document.addEventListener(
+            "contextmenu",
+            (event) => {
+
+                event.preventDefault();
+
+            }
+        );
+
+
+        /*
+         * Disable selection except form fields
+         */
+
+        document.addEventListener(
+            "selectstart",
+            (event) => {
+
+                const tag =
+                    event.target.tagName;
+
+                if (
+                    tag !== "INPUT" &&
+                    tag !== "TEXTAREA"
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+
+        /*
+         * Disable dragging
+         */
+
+        document.addEventListener(
+            "dragstart",
+            (event) => {
+
+                event.preventDefault();
+
+            }
+        );
+
+
+        /*
+         * Disable common copy/save/view-source shortcuts
+         * outside form inputs.
+         */
+
+        document.addEventListener(
+            "keydown",
+            (event) => {
+
+                const key =
+                    event.key.toLowerCase();
+
+                const tag =
+                    document.activeElement?.tagName;
+
+
+                if (
+                    (event.ctrlKey || event.metaKey) &&
+                    ["c", "u", "s", "a"].includes(key) &&
+                    tag !== "INPUT" &&
+                    tag !== "TEXTAREA"
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+
+                /*
+                 * F12 / DevTools shortcuts cannot be
+                 * reliably blocked, but we prevent the
+                 * common keyboard shortcuts here.
+                 */
+
+                if (
+                    event.key === "F12" &&
+                    tag !== "INPUT" &&
+                    tag !== "TEXTAREA"
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>
