@@ -603,7 +603,7 @@
                 <circle cx="12" cy="8" r="4"/>
                 <path d="M4 21c.8-4 3.3-6 8-6s7.2 2 8 6"/>
             </svg>
-                        <span class="text-[9px]">Account</span>
+            <span class="text-[9px]">Account</span>
         </button>
 
     </div>
@@ -624,7 +624,9 @@
 
     import {
         getAuth,
-        onAuthStateChanged
+        setPersistence,
+        browserLocalPersistence,
+        onIdTokenChanged
     } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
     import {
@@ -657,6 +659,15 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    /*
+     * Use browser-local Firebase Auth persistence so the
+     * authenticated session survives navigation/reloads.
+     */
+    const authPersistenceReady = setPersistence(
+        auth,
+        browserLocalPersistence
+    );
 
 
     /* =========================================================
@@ -741,7 +752,24 @@
        AUTH
     ========================================================= */
 
-    onAuthStateChanged(auth, async (user) => {
+    /*
+     * IMPORTANT:
+     * Do not redirect based on auth.currentUser during the
+     * initial page load. Firebase may still be restoring the
+     * persisted session. onIdTokenChanged is used as the
+     * authoritative auth-state observer.
+     */
+    onIdTokenChanged(auth, async (user) => {
+
+        /*
+         * Firebase's persistence setup must finish before we
+         * decide whether the visitor is authenticated.
+         */
+        try {
+            await authPersistenceReady;
+        } catch (error) {
+            console.error("Firebase Auth persistence error:", error);
+        }
 
         if (!user) {
             window.location.replace("login.html");
