@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <meta name="theme-color" content="#070b14">
+    <meta name="description" content="Login to your QuickMart account.">
+
+    <title>Login — QuickMart</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            background: #070b14;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    circle at 15% 10%,
+                    rgba(37, 99, 235, 0.18),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(124, 58, 237, 0.14),
+                    transparent 30%
+                ),
+                #070b14;
+            color: #fff;
+            font-family: Inter, system-ui, sans-serif;
+
+            /* Disable text selection */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        input {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            user-select: text;
+        }
+
+        .page-glow {
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.08);
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        .glow-one {
+            top: -100px;
+            left: -100px;
+        }
+
+        .glow-two {
+            right: -100px;
+            bottom: -100px;
+            background: rgba(124, 58, 237, 0.08);
+        }
+
+        .login-card {
+            background: rgba(15, 23, 42, 0.76);
+            border: 1px solid rgba(255, 255, 255, 0.075);
+            box-shadow:
+                0 25px 70px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.025);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input {
+            width: 100%;
+            height: 52px;
+            padding: 0 15px;
+            border-radius: 13px;
+            border: 1px solid rgba(148, 163, 184, 0.14);
+            background: rgba(255, 255, 255, 0.045);
+            color: #fff;
+            outline: none;
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+        }
+
+        .input:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .input:focus {
+            border-color: rgba(59, 130, 246, .8);
+            background: rgba(255, 255, 255, 0.06);
+            box-shadow:
+                0 0 0 3px rgba(59, 130, 246, .11);
+        }
+
+        .input.error {
+            border-color: rgba(239, 68, 68, .75);
+            box-shadow:
+                0 0 0 3px rgba(239, 68, 68, .08);
+        }
+
+        .input::placeholder {
+            color: #64748b;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            transition: .2s;
+        }
+
+        .password-toggle:hover {
+            background: rgba(255,255,255,.06);
+            color: #cbd5e1;
+        }
+
+        .login-button {
+            height: 52px;
+            border-radius: 13px;
+            background: #2563eb;
+            box-shadow:
+                0 10px 25px rgba(37, 99, 235, .20);
+            transition:
+                transform .2s ease,
+                background .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .login-button:hover {
+            background: #3b82f6;
+            box-shadow:
+                0 14px 30px rgba(37, 99, 235, .25);
+            transform: translateY(-1px);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-button:disabled {
+            opacity: .7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .spinner {
+            width: 19px;
+            height: 19px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,.3);
+            border-top-color: white;
+            animation: spin .7s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message {
+            animation: messageIn .2s ease;
+        }
+
+        @keyframes messageIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo-box {
+            box-shadow:
+                0 12px 30px rgba(37, 99, 235, .16);
+        }
+
+        .link {
+            color: #60a5fa;
+            transition: color .2s ease;
+        }
+
+        .link:hover {
+            color: #93c5fd;
+        }
+
+        .field-error {
+            color: #f87171;
+            font-size: 12px;
+            margin-top: 7px;
+            display: none;
+        }
+
+        .field-error.show {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-glow glow-one"></div>
+    <div class="page-glow glow-two"></div>
+
+    <main class="relative min-h-screen flex items-center justify-center px-5 py-10">
+
+        <section class="w-full max-w-[430px]">
+
+            <!-- Brand -->
+            <div class="text-center mb-7">
+
+                <div class="logo-box inline-flex w-[72px] h-[72px] rounded-[20px] overflow-hidden bg-white/5 border border-white/10 mb-5">
+                    <img
+                        src="https://i.ibb.co/PZkRpfGx/image.png"
+                        alt="QuickMart"
+                        class="w-full h-full object-cover"
+                        draggable="false"
+                    >
+                </div>
+
+                <h1 class="text-[28px] sm:text-[30px] font-bold tracking-tight">
+                    Welcome Back!
+                </h1>
+
+                <p class="text-sm text-slate-400 mt-2">
+                    Sign in to continue to dashboard
+                </p>
+
+            </div>
+
+
+            <!-- Card -->
+            <div class="login-card rounded-[22px] p-6 sm:p-8">
+
+                <form id="loginForm" novalidate>
+
+                    <!-- Email -->
+                    <div class="mb-5">
+
+                        <label
+                            for="email"
+                            class="block text-[13px] font-medium text-slate-300 mb-2"
+                        >
+                            Email address
+                        </label>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="email"
+                                type="email"
+                                inputmode="email"
+                                autocomplete="email"
+                                class="input"
+                                placeholder="you@example.com"
+                                maxlength="254"
+                                required
+                                spellcheck="false"
+                            >
+
+                        </div>
+
+                        <p id="emailError" class="field-error">
+                            Please enter a valid email address.
+                        </p>
+
+                    </div>
+
+
+                    <!-- Password -->
+                    <div class="mb-4">
+
+                        <div class="flex items-center justify-between mb-2">
+
+                            <label
+                                for="password"
+                                class="text-[13px] font-medium text-slate-300"
+                            >
+                                Password
+                            </label>
+
+                            <button
+                                type="button"
+                                id="forgotPassword"
+                                class="link text-xs font-medium"
+                            >
+                                Forgot password?
+                            </button>
+
+                        </div>
+
+                        <div class="input-wrap">
+
+                            <input
+                                id="password"
+                                type="password"
+                                autocomplete="current-password"
+                                class="input pr-12"
+                                placeholder="Enter your password"
+                                maxlength="128"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="password-toggle"
+                                aria-label="Show password"
+                            >
+
+                                <svg
+                                    id="eyeIcon"
+                                    width="19"
+                                    height="19"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/>
+                                    <circle cx="12" cy="12" r="2.5"/>
+                                </svg>
+
+                            </button>
+
+                        </div>
+
+                        <p id="passwordError" class="field-error">
+                            Please enter your password.
+                        </p>
+
+                    </div>
+
+
+                    <!-- Message -->
+                    <div
+                        id="message"
+                        class="message hidden rounded-xl px-4 py-3 mb-5 text-sm border"
+                    ></div>
+
+
+                    <!-- Login -->
+                    <button
+                        id="loginButton"
+                        type="submit"
+                        class="login-button w-full flex items-center justify-center gap-2 text-sm font-semibold"
+                    >
+                        <span id="buttonText">Sign in</span>
+
+                        <span
+                            id="buttonSpinner"
+                            class="spinner hidden"
+                        ></span>
+                    </button>
+
+                </form>
+
+
+                <!-- Register -->
+                <div class="flex items-center gap-3 my-7">
+
+                    <div class="h-px flex-1 bg-white/[0.07]"></div>
+
+                    <span class="text-[11px] text-slate-600 uppercase tracking-wider">
+                        New here?
+                    </span>
+
+                    <div class="h-px flex-1 bg-white/[0.07]"></div>
+
+                </div>
+
+
+                <a
+                    href="register.html"
+                    class="w-full h-[50px] rounded-[13px] border border-white/[0.09] bg-white/[0.025] hover:bg-white/[0.05] flex items-center justify-center text-sm font-medium text-slate-200 transition"
+                >
+                    Create an account
+                </a>
+
+            </div>
+
+
+            <!-- Footer -->
+            <p class="text-center text-[11px] text-slate-600 mt-6">
+                © 2026 Krishna. All rights reserved.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- Firebase -->
+    <script type="module">
+
+        import { initializeApp } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+        import {
+            getAuth,
+            setPersistence,
+            browserLocalPersistence,
+            signInWithEmailAndPassword,
+            sendPasswordResetEmail,
+            onAuthStateChanged
+        } from
+        "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+        /* ==========================================
+           FIREBASE CONFIG
+           Replace with your Firebase Web App config
+        ========================================== */
+
+        const firebaseConfig = {
+    apiKey: "AIzaSyBW83KNFkARuubDtJc0Kgy9cBU99GQCsIQ",
+    authDomain: "imkrishna.firebaseapp.com",
+    projectId: "imkrishna",
+    storageBucket: "imkrishna.firebasestorage.app",
+    messagingSenderId: "66739016952",
+    appId: "1:66739016952:web:a02c18cb7fe85b763cd70d"
+  };
+
+
+        /* ==========================================
+           INITIALIZE FIREBASE
+        ========================================== */
+
+        const app = initializeApp(firebaseConfig);
+
+        const auth = getAuth(app);
+
+        /*
+         * Keep the Firebase Auth session persistent across
+         * page changes, reloads and browser restarts.
+         */
+        const authPersistenceReady = setPersistence(
+            auth,
+            browserLocalPersistence
+        );
+
+
+        /* ==========================================
+           ELEMENTS
+        ========================================== */
+
+        const form =
+            document.getElementById("loginForm");
+
+        const email =
+            document.getElementById("email");
+
+        const password =
+            document.getElementById("password");
+
+        const loginButton =
+            document.getElementById("loginButton");
+
+        const buttonText =
+            document.getElementById("buttonText");
+
+        const buttonSpinner =
+            document.getElementById("buttonSpinner");
+
+        const message =
+            document.getElementById("message");
+
+        const forgotPassword =
+            document.getElementById("forgotPassword");
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+        const eyeIcon =
+            document.getElementById("eyeIcon");
+
+        const emailError =
+            document.getElementById("emailError");
+
+        const passwordError =
+            document.getElementById("passwordError");
+
+
+        /* ==========================================
+           SHOW MESSAGE
+        ========================================== */
+
+        function showMessage(text, type = "error") {
+
+            message.textContent = text;
+
+            message.classList.remove(
+                "hidden",
+                "bg-red-500/10",
+                "border-red-500/20",
+                "text-red-400",
+                "bg-green-500/10",
+                "border-green-500/20",
+                "text-green-400"
+            );
+
+            if (type === "success") {
+
+                message.classList.add(
+                    "bg-green-500/10",
+                    "border-green-500/20",
+                    "text-green-400"
+                );
+
+            } else {
+
+                message.classList.add(
+                    "bg-red-500/10",
+                    "border-red-500/20",
+                    "text-red-400"
+                );
+
+            }
+
+        }
+
+
+        function hideMessage() {
+
+            message.classList.add("hidden");
+
+        }
+
+
+        /* ==========================================
+           FIREBASE ERROR HANDLING
+        ========================================== */
+
+        function getFirebaseError(error) {
+
+            switch (error.code) {
+
+                case "auth/invalid-credential":
+                    return "Incorrect email or password.";
+
+                case "auth/user-not-found":
+                    return "Incorrect email or password.";
+
+                case "auth/wrong-password":
+                    return "Incorrect email or password.";
+
+                case "auth/invalid-email":
+                    return "Please enter a valid email address.";
+
+                case "auth/too-many-requests":
+                    return "Too many attempts. Please try again later.";
+
+                case "auth/network-request-failed":
+                    return "Network error. Please check your connection.";
+
+                case "auth/user-disabled":
+                    return "This account has been disabled.";
+
+                default:
+                    return "Unable to sign in. Please try again.";
+
+            }
+
+        }
+
+
+        /* ==========================================
+           VALIDATION
+        ========================================== */
+
+        function validateEmail() {
+
+            const value = email.value.trim();
+
+            const valid =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+
+            email.classList.toggle("error", !valid);
+
+            emailError.classList.toggle(
+                "show",
+                !valid
+            );
+
+            return valid;
+
+        }
+
+
+        function validatePassword() {
+
+            const valid =
+                password.value.length > 0;
+
+            password.classList.toggle(
+                "error",
+                !valid
+            );
+
+            passwordError.classList.toggle(
+                "show",
+                !valid
+            );
+
+            return valid;
+
+        }
+
+
+        email.addEventListener("input", () => {
+
+            if (email.value.trim()) {
+
+                email.classList.remove("error");
+
+                emailError.classList.remove("show");
+
+            }
+
+            hideMessage();
+
+        });
+
+
+        password.addEventListener("input", () => {
+
+            if (password.value) {
+
+                password.classList.remove("error");
+
+                passwordError.classList.remove("show");
+
+            }
+
+            hideMessage();
+
+        });
+
+
+        /* ==========================================
+           PASSWORD VISIBILITY
+        ========================================== */
+
+        togglePassword.addEventListener("click", () => {
+
+            const hidden =
+                password.type === "password";
+
+            password.type =
+                hidden ? "text" : "password";
+
+            togglePassword.setAttribute(
+                "aria-label",
+                hidden
+                    ? "Hide password"
+                    : "Show password"
+            );
+
+            eyeIcon.innerHTML = hidden
+
+                ? `
+                    <path d="M3 3l18 18"/>
+                    <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/>
+                    <path d="M9.9 4.2A10.7 10.7 0 0 1 12 4c6.5 0 10 8 10 8a18.4 18.4 0 0 1-3.2 4.5"/>
+                    <path d="M6.2 6.2C3.4 8.1 2 12 2 12s3.5 8 10 8c1.5 0 2.8-.3 4-.8"/>
+                `
+
+                : `
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/>
+                    <circle cx="12" cy="12" r="2.5"/>
+                `;
+
+        });
+
+
+        /* ==========================================
+           LOGIN BUTTON STATE
+        ========================================== */
+
+        function setLoading(loading) {
+
+            loginButton.disabled = loading;
+
+            buttonText.textContent =
+                loading ? "Signing in..." : "Sign in";
+
+            buttonSpinner.classList.toggle(
+                "hidden",
+                !loading
+            );
+
+        }
+
+
+        /* ==========================================
+           LOGIN
+        ========================================== */
+
+        form.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+
+            hideMessage();
+
+            const validEmail =
+                validateEmail();
+
+            const validPassword =
+                validatePassword();
+
+            if (!validEmail || !validPassword) {
+
+                return;
+
+            }
+
+
+            setLoading(true);
+
+
+            try {
+
+                /*
+                 * Wait for persistence before signing in.
+                 * This prevents index.html from opening before
+                 * Firebase has restored/saved the auth session.
+                 */
+                await authPersistenceReady;
+
+                await signInWithEmailAndPassword(
+                    auth,
+                    email.value.trim(),
+                    password.value
+                );
+
+                showMessage(
+                    "Signed in successfully. Redirecting...",
+                    "success"
+                );
+
+                /*
+                 * Firebase Auth is now the source of truth.
+                 * The auth observer below will perform the redirect.
+                 */
+
+
+            } catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
+
+                showMessage(
+                    getFirebaseError(error)
+                );
+
+                setLoading(false);
+
+            }
+
+        });
+
+
+        /* ==========================================
+           FORGOT PASSWORD
+        ========================================== */
+
+        forgotPassword.addEventListener(
+            "click",
+            async () => {
+
+                hideMessage();
+
+                const value =
+                    email.value.trim();
+
+
+                if (
+                    !value ||
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+                ) {
+
+                    email.classList.add("error");
+
+                    emailError.textContent =
+                        "Enter your email address first.";
+
+                    emailError.classList.add("show");
+
+                    email.focus();
+
+                    return;
+
+                }
+
+
+                forgotPassword.disabled = true;
+
+                forgotPassword.textContent =
+                    "Sending...";
+
+
+                try {
+
+                    await sendPasswordResetEmail(
+                        auth,
+                        value
+                    );
+
+
+                    showMessage(
+                        "Password reset email sent. Check your inbox.",
+                        "success"
+                    );
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Password reset error:",
+                        error
+                    );
+
+                    showMessage(
+                        getFirebaseError(error)
+                    );
+
+                } finally {
+
+                    forgotPassword.disabled = false;
+
+                    forgotPassword.textContent =
+                        "Forgot password?";
+
+                }
+
+            }
+        );
+
+
+        /* ==========================================
+           EXISTING SESSION
+        ========================================== */
+
+        /*
+         * If a valid Firebase session already exists, skip
+         * the login page. The observer fires after Firebase
+         * restores the persisted session.
+         */
+        authPersistenceReady.then(() => {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    window.location.replace("index.html");
+                }
+            });
+        }).catch((error) => {
+            console.error("Firebase Auth persistence initialization failed:", error);
+        });
+
+
+        /* ==========================================
+           BASIC UI RESTRICTIONS
+        ========================================== */
+
+        document.addEventListener(
+            "contextmenu",
+            (event) => {
+                event.preventDefault();
+            }
+        );
+
+
+        document.addEventListener(
+            "selectstart",
+            (event) => {
+
+                if (
+                    event.target.tagName !== "INPUT" &&
+                    event.target.tagName !== "TEXTAREA"
+                ) {
+
+                    event.preventDefault();
+
+                }
+
+            }
+        );
+
+
+        document.addEventListener(
+            "dragstart",
+            (event) => {
+
+                event.preventDefault();
+
+            }
+        );
+
+
+        /* Block common copy shortcuts */
+
+        document.addEventListener(
+            "keydown",
+            (event) => {
+
+                const key =
+                    event.key.toLowerCase();
+
+                if (
+                    (event.ctrlKey || event.metaKey) &&
+                    ["c", "u", "s", "a"].includes(key)
+                ) {
+
+                    /*
+                     * Allow normal editing inside inputs.
+                     */
+                    const tag =
+                        document.activeElement?.tagName;
+
+                    if (
+                        tag !== "INPUT" &&
+                        tag !== "TEXTAREA"
+                    ) {
+
+                        event.preventDefault();
+
+                    }
+
+                }
+
+            }
+        );
+
+    </script>
+
+</body>
+</html>

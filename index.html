@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <meta name="theme-color" content="#070b14">
+
+    <meta
+        name="description"
+        content="QuickMart - Shop your favorite products online."
+    >
+
+    <title>QuickMart — Shop Online</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Inter", "system-ui", "sans-serif"]
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            background: #070b14;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(37,99,235,.13), transparent 28%),
+                radial-gradient(circle at 95% 40%, rgba(124,58,237,.09), transparent 28%),
+                #070b14;
+            color: #fff;
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+            -webkit-user-select: none;
+            user-select: none;
+            padding-bottom: 80px;
+        }
+
+        input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        button, a {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 20px;
+        }
+
+        .glass {
+            background: rgba(15,23,42,.72);
+            border: 1px solid rgba(255,255,255,.07);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
+
+        .navbar {
+            background: rgba(7,11,20,.78);
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
+
+        .logo-shadow {
+            box-shadow: 0 10px 30px rgba(37,99,235,.18);
+        }
+
+        .search-box {
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.08);
+            transition: .2s;
+        }
+
+        .search-box:focus-within {
+            border-color: rgba(59,130,246,.65);
+            box-shadow: 0 0 0 3px rgba(59,130,246,.08);
+        }
+
+        .search-input {
+            background: transparent;
+            outline: none;
+            color: white;
+        }
+
+        .search-input::placeholder {
+            color: #64748b;
+        }
+
+        .category-btn {
+            white-space: nowrap;
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(255,255,255,.07);
+            color: #94a3b8;
+            transition: .2s;
+        }
+
+        .category-btn:hover {
+            color: white;
+            background: rgba(255,255,255,.07);
+        }
+
+        .category-btn.active {
+            background: #2563eb;
+            border-color: #2563eb;
+            color: white;
+            box-shadow: 0 7px 22px rgba(37,99,235,.18);
+        }
+
+        .hero {
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(37,99,235,.14),
+                    rgba(124,58,237,.08)
+                );
+            border: 1px solid rgba(255,255,255,.07);
+        }
+
+        .product-card {
+            background: rgba(15,23,42,.62);
+            border: 1px solid rgba(255,255,255,.065);
+            transition:
+                transform .22s ease,
+                border-color .22s ease,
+                background .22s ease,
+                box-shadow .22s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            background: rgba(15,23,42,.86);
+            border-color: rgba(59,130,246,.24);
+            box-shadow: 0 18px 40px rgba(0,0,0,.18);
+        }
+
+        .product-image {
+            background: rgba(255,255,255,.035);
+            overflow: hidden;
+        }
+
+        .product-image img {
+            transition: transform .35s ease;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.045);
+        }
+
+        .add-btn {
+            background: #2563eb;
+            transition: .2s;
+            box-shadow: 0 8px 18px rgba(37,99,235,.14);
+        }
+
+        .add-btn:hover {
+            background: #3b82f6;
+            transform: translateY(-1px);
+        }
+
+        .add-btn:active {
+            transform: scale(.97);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -6px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2563eb;
+            border: 2px solid #070b14;
+            border-radius: 999px;
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .skeleton {
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(255,255,255,.035),
+                    rgba(255,255,255,.075),
+                    rgba(255,255,255,.035)
+                );
+            background-size: 200% 100%;
+            animation: skeleton 1.4s infinite;
+        }
+
+        @keyframes skeleton {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .bottom-nav {
+            background: rgba(7,11,20,.9);
+            border-top: 1px solid rgba(255,255,255,.07);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .mobile-nav-item {
+            color: #64748b;
+            transition: .2s;
+        }
+
+        .mobile-nav-item.active,
+        .mobile-nav-item:hover {
+            color: #60a5fa;
+        }
+
+        .toast {
+            position: fixed;
+            left: 50%;
+            bottom: 92px;
+            transform: translate(-50%,20px);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            transition: opacity .25s ease, transform .25s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%,0);
+        }
+
+        .empty-icon {
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.07);
+        }
+
+        .discount {
+            background: rgba(34,197,94,.10);
+            color: #4ade80;
+            border: 1px solid rgba(34,197,94,.12);
+        }
+
+        @media (min-width: 768px) {
+            body {
+                padding-bottom: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="navbar sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="h-[68px] flex items-center justify-between gap-4">
+
+            <a href="index.html" class="flex items-center gap-3 shrink-0">
+                <div class="logo-shadow w-10 h-10 rounded-xl overflow-hidden border border-white/10">
+                    <img
+                        src="https://i.ibb.co/PZkRpfGx/image.png"
+                        alt="QuickMart"
+                        class="w-full h-full object-cover"
+                        draggable="false"
+                    >
+                </div>
+
+                <div class="hidden sm:block">
+                    <div class="font-bold text-[17px] tracking-tight">QuickMart</div>
+                    <div class="text-[9px] uppercase tracking-[.18em] text-slate-500">
+                        Shop smart
+                    </div>
+                </div>
+            </a>
+
+            <div class="hidden md:flex flex-1 max-w-xl">
+                <div class="search-box w-full h-11 rounded-xl flex items-center px-4 gap-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8" class="text-slate-500 shrink-0">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4-4"/>
+                    </svg>
+
+                    <input
+                        id="desktopSearch"
+                        type="search"
+                        class="search-input w-full text-sm"
+                        placeholder="Search products..."
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+
+                <button
+                    id="accountButton"
+                    type="button"
+                    class="hidden sm:flex items-center gap-2 h-10 px-3 rounded-xl hover:bg-white/[.05] transition"
+                >
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/10 flex items-center justify-center">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8">
+                            <circle cx="12" cy="8" r="4"/>
+                            <path d="M4 21c.8-4 3.3-6 8-6s7.2 2 8 6"/>
+                        </svg>
+                    </div>
+
+                    <div class="text-left">
+                        <div id="accountName" class="text-xs font-medium text-slate-200 max-w-[100px] truncate">
+                            Account
+                        </div>
+                        <div class="text-[9px] text-slate-500">My account</div>
+                    </div>
+                </button>
+
+                <button
+                    id="cartButton"
+                    type="button"
+                    class="relative w-10 h-10 rounded-xl hover:bg-white/[.05] flex items-center justify-center transition"
+                    aria-label="Open cart"
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.8">
+                        <path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.5L21 8H6"/>
+                        <circle cx="10" cy="20" r="1"/>
+                        <circle cx="18" cy="20" r="1"/>
+                    </svg>
+
+                    <span id="cartBadge" class="cart-badge hidden">0</span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+
+    <div class="md:hidden mb-5">
+        <div class="search-box h-11 rounded-xl flex items-center px-4 gap-3">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8" class="text-slate-500">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="m20 20-4-4"/>
+            </svg>
+
+            <input
+                id="mobileSearch"
+                type="search"
+                class="search-input w-full text-sm"
+                placeholder="Search products..."
+                autocomplete="off"
+            >
+        </div>
+    </div>
+
+    <section class="hero rounded-2xl sm:rounded-3xl p-6 sm:p-10 mb-7 overflow-hidden relative">
+        <div class="relative z-10 max-w-xl">
+
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+                bg-blue-500/10 border border-blue-500/15 text-blue-400
+                text-[10px] font-semibold uppercase tracking-wider mb-4">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+                Welcome to QuickMart
+            </div>
+
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-[1.08]">
+                Everything you need,
+                <span class="text-blue-400">in one place.</span>
+            </h1>
+
+            <p class="text-sm sm:text-base text-slate-400 mt-4 max-w-md leading-6">
+                Discover quality products at great prices.
+                Browse our collection and order what you love.
+            </p>
+
+            <button
+                id="shopNowButton"
+                type="button"
+                class="mt-6 h-11 px-5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold transition"
+            >
+                Shop now
+            </button>
+        </div>
+
+        <div class="absolute -right-16 -bottom-24 w-72 h-72 rounded-full border border-blue-500/10"></div>
+        <div class="absolute -right-5 -bottom-12 w-48 h-48 rounded-full border border-blue-500/10"></div>
+    </section>
+
+    <section class="mb-8">
+        <div class="flex items-center justify-between mb-3">
+            <h2 class="text-lg font-bold tracking-tight">Categories</h2>
+        </div>
+
+        <div id="categories" class="flex gap-2 overflow-x-auto pb-2"></div>
+    </section>
+
+    <section id="featuredSection" class="mb-9 hidden">
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h2 class="text-lg sm:text-xl font-bold tracking-tight">Featured products</h2>
+                <p class="text-xs text-slate-500 mt-1">Handpicked for you</p>
+            </div>
+        </div>
+
+        <div
+            id="featuredProducts"
+            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
+        ></div>
+    </section>
+
+    <section id="productsSection">
+
+        <div class="flex items-center justify-between mb-4">
+            <div>
+                <h2 id="productsTitle" class="text-lg sm:text-xl font-bold tracking-tight">
+                    All products
+                </h2>
+
+                <p id="productsSubtitle" class="text-xs text-slate-500 mt-1">
+                    Browse our latest collection
+                </p>
+            </div>
+
+            <span id="productCount" class="text-[11px] text-slate-600"></span>
+        </div>
+
+        <div
+            id="loadingGrid"
+            class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
+        >
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="skeleton aspect-square"></div>
+                <div class="p-3">
+                    <div class="skeleton h-3 rounded w-3/4 mb-2"></div>
+                    <div class="skeleton h-3 rounded w-1/2"></div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="skeleton aspect-square"></div>
+                <div class="p-3">
+                    <div class="skeleton h-3 rounded w-3/4 mb-2"></div>
+                    <div class="skeleton h-3 rounded w-1/2"></div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="skeleton aspect-square"></div>
+                <div class="p-3">
+                    <div class="skeleton h-3 rounded w-3/4 mb-2"></div>
+                    <div class="skeleton h-3 rounded w-1/2"></div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="skeleton aspect-square"></div>
+                <div class="p-3">
+                    <div class="skeleton h-3 rounded w-3/4 mb-2"></div>
+                    <div class="skeleton h-3 rounded w-1/2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            id="productsGrid"
+            class="hidden grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
+        ></div>
+
+        <div id="emptyState" class="hidden py-16 text-center">
+            <div class="empty-icon mx-auto w-16 h-16 rounded-2xl flex items-center justify-center mb-4">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.6" class="text-slate-500">
+                    <circle cx="11" cy="11" r="7"/>
+                    <path d="m20 20-4-4"/>
+                </svg>
+            </div>
+
+            <h3 class="font-semibold text-slate-300">No products found</h3>
+            <p class="text-xs text-slate-600 mt-2">
+                Try a different search or category.
+            </p>
+        </div>
+
+        <div id="errorState" class="hidden py-16 text-center">
+            <div class="empty-icon mx-auto w-16 h-16 rounded-2xl flex items-center justify-center mb-4">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.6" class="text-slate-500">
+                    <path d="M12 3 2.8 19a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L12 3Z"/>
+                    <path d="M12 9v4m0 4h.01"/>
+                </svg>
+            </div>
+
+            <h3 class="font-semibold text-slate-300">
+                Couldn't load products
+            </h3>
+
+            <p class="text-xs text-slate-600 mt-2">
+                Please check your connection and try again.
+            </p>
+
+            <button
+                id="retryButton"
+                type="button"
+                class="mt-4 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-xs font-semibold transition"
+            >
+                Try again
+            </button>
+        </div>
+
+    </section>
+</main>
+
+<nav class="bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 h-[70px]">
+    <div class="max-w-lg mx-auto h-full grid grid-cols-4">
+
+        <button
+            data-nav="home"
+            type="button"
+            class="mobile-nav-item active flex flex-col items-center justify-center gap-1"
+        >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8">
+                <path d="m3 10 9-7 9 7"/>
+                <path d="M5 9v11h14V9"/>
+            </svg>
+            <span class="text-[9px]">Home</span>
+        </button>
+
+        <button
+            id="mobileSearchButton"
+            type="button"
+            class="mobile-nav-item flex flex-col items-center justify-center gap-1"
+        >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8">
+                <circle cx="11" cy="11" r="7"/>
+                <path d="m20 20-4-4"/>
+            </svg>
+            <span class="text-[9px]">Search</span>
+        </button>
+
+        <button
+            id="mobileCartButton"
+            type="button"
+            class="mobile-nav-item relative flex flex-col items-center justify-center gap-1"
+        >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8">
+                <path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h7.9a2 2 0 0 0 2-1.5L21 8H6"/>
+                <circle cx="10" cy="20" r="1"/>
+                <circle cx="18" cy="20" r="1"/>
+            </svg>
+            <span class="text-[9px]">Cart</span>
+            <span id="mobileCartBadge" class="cart-badge hidden top-2 right-[calc(50%-22px)]">0</span>
+        </button>
+
+        <button
+            id="mobileAccountButton"
+            type="button"
+            class="mobile-nav-item flex flex-col items-center justify-center gap-1"
+        >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.8">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 21c.8-4 3.3-6 8-6s7.2 2 8 6"/>
+            </svg>
+            <span class="text-[9px]">Account</span>
+        </button>
+
+    </div>
+</nav>
+
+<div id="toast" class="toast glass rounded-xl px-4 py-3 flex items-center gap-3 shadow-2xl">
+    <span id="toastIcon" class="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center">
+        ✓
+    </span>
+    <span id="toastText" class="text-xs font-medium text-slate-200">
+        Added to cart
+    </span>
+</div>
+
+<script type="module">
+    import { initializeApp }
+        from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+    import {
+        getAuth,
+        setPersistence,
+        browserLocalPersistence,
+        onIdTokenChanged
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+    import {
+        getFirestore,
+        collection,
+        getDocs,
+        query,
+        where
+    } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+    /* =========================================================
+       FIREBASE CONFIG
+    ========================================================= */
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBW83KNFkARuubDtjC0Kgy9cBU99GQCsIQ",
+        authDomain: "imkrishna.firebaseapp.com",
+        projectId: "imkrishna",
+        storageBucket: "imkrishna.firebasestorage.app",
+        messagingSenderId: "66739016952",
+        appId: "1:66739016952:web:a02c18cb7fe85b763cd70d"
+    };
+
+
+    /* =========================================================
+       FIREBASE INITIALIZATION
+    ========================================================= */
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    /*
+     * Use browser-local Firebase Auth persistence so the
+     * authenticated session survives navigation/reloads.
+     */
+    const authPersistenceReady = setPersistence(
+        auth,
+        browserLocalPersistence
+    );
+
+
+    /* =========================================================
+       STATE
+    ========================================================= */
+
+    let currentUser = null;
+    let allProducts = [];
+    let filteredProducts = [];
+    let selectedCategory = "all";
+    let searchTerm = "";
+
+    let cart = [];
+
+    try {
+        cart = JSON.parse(
+            localStorage.getItem("quickmart_cart") || "[]"
+        );
+
+        if (!Array.isArray(cart)) {
+            cart = [];
+        }
+    } catch {
+        cart = [];
+    }
+
+
+    /* =========================================================
+       DOM
+    ========================================================= */
+
+    const desktopSearch =
+        document.getElementById("desktopSearch");
+
+    const mobileSearch =
+        document.getElementById("mobileSearch");
+
+    const categories =
+        document.getElementById("categories");
+
+    const productsGrid =
+        document.getElementById("productsGrid");
+
+    const featuredProducts =
+        document.getElementById("featuredProducts");
+
+    const featuredSection =
+        document.getElementById("featuredSection");
+
+    const loadingGrid =
+        document.getElementById("loadingGrid");
+
+    const emptyState =
+        document.getElementById("emptyState");
+
+    const errorState =
+        document.getElementById("errorState");
+
+    const productCount =
+        document.getElementById("productCount");
+
+    const productsTitle =
+        document.getElementById("productsTitle");
+
+    const productsSubtitle =
+        document.getElementById("productsSubtitle");
+
+    const cartBadge =
+        document.getElementById("cartBadge");
+
+    const mobileCartBadge =
+        document.getElementById("mobileCartBadge");
+
+    const toast =
+        document.getElementById("toast");
+
+    const toastText =
+        document.getElementById("toastText");
+
+
+    /* =========================================================
+       AUTH
+    ========================================================= */
+
+    /*
+     * IMPORTANT:
+     * Do not redirect based on auth.currentUser during the
+     * initial page load. Firebase may still be restoring the
+     * persisted session. onIdTokenChanged is used as the
+     * authoritative auth-state observer.
+     */
+    authPersistenceReady.then(() => {
+
+        onAuthStateChanged(auth, async (user) => {
+
+            if (!user) {
+                window.location.replace("login.html");
+                return;
+            }
+
+            currentUser = user;
+
+            document.getElementById("accountName").textContent =
+                user.displayName ||
+                user.email?.split("@")[0] ||
+                "Account";
+
+            updateCartUI();
+            await loadProducts();
+        });
+
+    }).catch((error) => {
+        console.error("Firebase Auth persistence initialization failed:", error);
+    });
+
+
+    /* =========================================================
+       LOAD PRODUCTS
+    ========================================================= */
+
+    async function loadProducts() {
+
+        showLoading();
+
+        try {
+
+            const productsQuery = query(
+                collection(db, "products"),
+                where("active", "==", true)
+            );
+
+            const snapshot =
+                await getDocs(productsQuery);
+
+            allProducts = [];
+
+            snapshot.forEach((doc) => {
+
+                allProducts.push({
+                    id: doc.id,
+                    ...doc.data()
+                });
+
+            });
+
+
+            /* Featured products first */
+
+            allProducts.sort((a, b) => {
+
+                if (a.featured === b.featured) {
+                    return 0;
+                }
+
+                return a.featured ? -1 : 1;
+            });
+
+
+            buildCategories();
+            applyFilters();
+            renderFeatured();
+
+        } catch (error) {
+
+            console.error(
+                "QuickMart products error:",
+                error
+            );
+
+            showError();
+        }
+    }
+
+
+    /* =========================================================
+       CATEGORIES
+    ========================================================= */
+
+    function buildCategories() {
+
+        const categorySet = new Set();
+
+        allProducts.forEach((product) => {
+
+            if (
+                typeof product.category === "string" &&
+                product.category.trim()
+            ) {
+                categorySet.add(
+                    product.category.trim()
+                );
+            }
+        });
+
+
+        categories.innerHTML = "";
+
+
+        addCategoryButton(
+            "all",
+            "All products"
+        );
+
+
+        [...categorySet]
+            .sort((a, b) =>
+                a.localeCompare(b)
+            )
+            .forEach((category) => {
+
+                addCategoryButton(
+                    category,
+                    category
+                );
+
+            });
+    }
+
+
+    function addCategoryButton(
+        value,
+        label
+    ) {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.dataset.category =
+            value;
+
+        button.className =
+            "category-btn px-4 py-2 rounded-xl text-xs font-medium";
+
+        if (value === selectedCategory) {
+            button.classList.add("active");
+        }
+
+        button.textContent =
+            label;
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                selectedCategory =
+                    value;
+
+                document
+                    .querySelectorAll(
+                        ".category-btn"
+                    )
+                    .forEach((item) => {
+
+                        item.classList.toggle(
+                            "active",
+                            item.dataset.category ===
+                            selectedCategory
+                        );
+
+                    });
+
+                applyFilters();
+
+            }
+        );
+
+        categories.appendChild(
+            button
+        );
+    }
+
+
+    /* =========================================================
+       SEARCH + FILTER
+    ========================================================= */
+
+    function handleSearch(value) {
+
+        searchTerm =
+            value.trim();
+
+        desktopSearch.value =
+            value;
+
+        mobileSearch.value =
+            value;
+
+        applyFilters();
+    }
+
+
+    desktopSearch.addEventListener(
+        "input",
+        (event) => {
+            handleSearch(
+                event.target.value
+            );
+        }
+    );
+
+
+    mobileSearch.addEventListener(
+        "input",
+        (event) => {
+            handleSearch(
+                event.target.value
+            );
+        }
+    );
+
+
+    function applyFilters() {
+
+        const normalizedSearch =
+            searchTerm.toLowerCase();
+
+        filteredProducts =
+            allProducts.filter(
+                (product) => {
+
+                    const categoryMatch =
+                        selectedCategory === "all" ||
+                        String(
+                            product.category || ""
+                        ).toLowerCase() ===
+                        selectedCategory.toLowerCase();
+
+
+                    const searchableText = [
+                        product.name,
+                        product.description,
+                        product.category
+                    ]
+                        .filter(Boolean)
+                        .join(" ")
+                        .toLowerCase();
+
+
+                    const searchMatch =
+                        !normalizedSearch ||
+                        searchableText.includes(
+                            normalizedSearch
+                        );
+
+
+                    return (
+                        categoryMatch &&
+                        searchMatch
+                    );
+                }
+            );
+
+
+        renderProducts();
+    }
+
+
+    /* =========================================================
+       PRODUCT RENDERING
+    ========================================================= */
+
+    function renderProducts() {
+
+        loadingGrid.classList.add(
+            "hidden"
+        );
+
+        productsGrid.classList.add(
+            "hidden"
+        );
+
+        productsGrid.classList.remove(
+            "grid"
+        );
+
+        emptyState.classList.add(
+            "hidden"
+        );
+
+
+        productCount.textContent =
+            `${filteredProducts.length} ${
+                filteredProducts.length === 1
+                    ? "product"
+                    : "products"
+            }`;
+
+
+        if (searchTerm) {
+
+            productsTitle.textContent =
+                "Search results";
+
+            productsSubtitle.textContent =
+                `Results for "${searchTerm}"`;
+
+        } else if (
+            selectedCategory !== "all"
+        ) {
+
+            productsTitle.textContent =
+                selectedCategory;
+
+            productsSubtitle.textContent =
+                "Products in this category";
+
+        } else {
+
+            productsTitle.textContent =
+                "All products";
+
+            productsSubtitle.textContent =
+                "Browse our latest collection";
+        }
+
+
+        if (!filteredProducts.length) {
+
+            emptyState.classList.remove(
+                "hidden"
+            );
+
+            return;
+        }
+
+
+        productsGrid.innerHTML =
+            filteredProducts
+                .map(createProductCard)
+                .join("");
+
+
+        productsGrid.classList.remove(
+            "hidden"
+        );
+
+        productsGrid.classList.add(
+            "grid"
+        );
+    }
+
+
+    function renderFeatured() {
+
+        const featured =
+            allProducts
+                .filter(
+                    (product) =>
+                        product.featured === true
+                )
+                .slice(0, 4);
+
+
+        if (!featured.length) {
+
+            featuredSection.classList.add(
+                "hidden"
+            );
+
+            return;
+        }
+
+
+        featuredSection.classList.remove(
+            "hidden"
+        );
+
+
+        featuredProducts.innerHTML =
+            featured
+                .map(createProductCard)
+                .join("");
+    }
+
+
+    /* =========================================================
+       SECURITY / ESCAPING
+    ========================================================= */
+
+    function escapeHTML(value) {
+
+        return String(
+            value ?? ""
+        ).replace(
+            /[&<>"']/g,
+            (character) => {
+
+                const entities = {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#039;"
+                };
+
+                return entities[
+                    character
+                ];
+            }
+        );
+    }
+
+
+    function escapeAttribute(value) {
+
+        return escapeHTML(value)
+            .replace(/`/g, "&#096;");
+    }
+
+
+    function formatMoney(value) {
+
+        const number =
+            Number(value || 0);
+
+        return number.toLocaleString(
+            "en-IN"
+        );
+    }
+
+
+    /* =========================================================
+       PRODUCT CARD
+    ========================================================= */
+
+    function createProductCard(product) {
+
+        const id =
+            escapeAttribute(
+                product.id
+            );
+
+        const name =
+            escapeHTML(
+                product.name ||
+                "Unnamed product"
+            );
+
+        const description =
+            escapeHTML(
+                product.description ||
+                ""
+            );
+
+        const image =
+            escapeAttribute(
+                product.image || ""
+            );
+
+        const category =
+            escapeHTML(
+                product.category ||
+                "Product"
+            );
+
+        const price =
+            Number(product.price || 0);
+
+        const mrp =
+            Number(product.mrp || 0);
+
+        const stock =
+            Number(
+                product.stock ?? 0
+            );
+
+        const discount =
+            mrp > price
+                ? Math.round(
+                    ((mrp - price) / mrp) * 100
+                )
+                : 0;
+
+        const outOfStock =
+            stock <= 0;
+
+
+        return `
+            <article
+                class="product-card rounded-2xl overflow-hidden"
+                data-product-card="${id}"
+            >
+
+                <button
+                    type="button"
+                    class="product-open w-full text-left"
+                    data-id="${id}"
+                    aria-label="View ${name}"
+                >
+
+                    <div
+                        class="product-image aspect-square relative"
+                    >
+
+                        ${
+                            image
+                                ? `
+                                    <img
+                                        src="${image}"
+                                        alt="${name}"
+                                        loading="lazy"
+                                        class="w-full h-full object-cover"
+                                        draggable="false"
+                                        onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden')"
+                                    >
+
+                                    <div
+                                        class="hidden absolute inset-0 flex items-center justify-center text-slate-600 text-xs"
+                                    >
+                                        Image unavailable
+                                    </div>
+                                `
+                                : `
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center text-slate-600 text-xs"
+                                    >
+                                        No image
+                                    </div>
+                                `
+                        }
+
+
+                        ${
+                            discount
+                                ? `
+                                    <span
+                                        class="discount absolute top-2 left-2 px-2 py-1 rounded-lg text-[9px] font-bold"
+                                    >
+                                        ${discount}% OFF
+                                    </span>
+                                `
+                                : ""
+                        }
+
+
+                        ${
+                            outOfStock
+                                ? `
+                                    <div
+                                        class="absolute inset-0 bg-black/45 flex items-center justify-center"
+                                    >
+                                        <span
+                                            class="px-3 py-1.5 rounded-lg bg-black/60 border border-white/10 text-[10px] font-semibold text-slate-300"
+                                        >
+                                            Out of stock
+                                        </span>
+                                    </div>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <div class="p-3 pb-1">
+
+                        <div
+                            class="text-[9px] uppercase tracking-wider text-slate-600 mb-1"
+                        >
+                            ${category}
+                        </div>
+
+                        <h3
+                            class="text-xs sm:text-sm font-semibold text-slate-200 line-clamp-2 leading-5 min-h-[40px]"
+                        >
+                            ${name}
+                        </h3>
+
+                        ${
+                            description
+                                ? `
+                                    <p class="hidden sm:block text-[10px] text-slate-600 line-clamp-1 mt-1">
+                                        ${description}
+                                    </p>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+                </button>
+
+
+                <div
+                    class="px-3 pb-3 flex items-end justify-between gap-2"
+                >
+
+                    <div>
+
+                        <div
+                            class="text-sm sm:text-base font-bold"
+                        >
+                            ₹${formatMoney(price)}
+                        </div>
+
+                        ${
+                            mrp > price
+                                ? `
+                                    <div
+                                        class="text-[10px] text-slate-600 line-through"
+                                    >
+                                        ₹${formatMoney(mrp)}
+                                    </div>
+                                `
+                                : ""
+                        }
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="add-btn shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-white ${outOfStock ? "opacity-40 cursor-not-allowed" : ""}"
+                        data-add-id="${id}"
+                        ${outOfStock ? "disabled" : ""}
+                        aria-label="Add ${name} to cart"
+                    >
+
+                        <svg
+                            width="17"
+                            height="17"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <path d="M12 5v14"/>
+                            <path d="M5 12h14"/>
+                        </svg>
+
+                    </button>
+
+                </div>
+
+            </article>
+        `;
+    }
+
+
+    /* =========================================================
+       PRODUCT CLICK / CART CLICK
+    ========================================================= */
+
+    document.addEventListener(
+        "click",
+        (event) => {
+
+            const addButton =
+                event.target.closest(
+                    "[data-add-id]"
+                );
+
+
+            if (addButton) {
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                addToCart(
+                    addButton.dataset.addId
+                );
+
+                return;
+            }
+
+
+            const productButton =
+                event.target.closest(
+                    "[data-id]"
+                );
+
+
+            if (productButton) {
+
+                const id =
+                    productButton.dataset.id;
+
+                window.location.href =
+                    `product.html?id=${encodeURIComponent(id)}`;
+            }
+        }
+    );
+
+
+    /* =========================================================
+       CART
+    ========================================================= */
+
+    function addToCart(id) {
+
+        const product =
+            allProducts.find(
+                (item) =>
+                    item.id === id
+            );
+
+
+        if (!product) {
+            return;
+        }
+
+
+        const stock =
+            Number(
+                product.stock ?? 0
+            );
+
+
+        if (stock <= 0) {
+
+            showToast(
+                "This product is out of stock"
+            );
+
+            return;
+        }
+
+
+        const existing =
+            cart.find(
+                (item) =>
+                    item.id === id
+            );
+
+
+        if (existing) {
+
+            if (
+                Number(
+                    existing.quantity || 0
+                ) >= stock
+            ) {
+
+                showToast(
+                    "Maximum available quantity reached"
+                );
+
+                return;
+            }
+
+
+            existing.quantity =
+                Number(
+                    existing.quantity || 0
+                ) + 1;
+
+        } else {
+
+            cart.push({
+                id: id,
+                quantity: 1
+            });
+        }
+
+
+        saveCart();
+
+        updateCartUI();
+
+        showToast(
+            "Added to cart"
+        );
+    }
+
+
+    function saveCart() {
+
+        try {
+
+            localStorage.setItem(
+                "quickmart_cart",
+                JSON.stringify(cart)
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Cart storage error:",
+                error
+            );
+        }
+    }
+
+
+    function updateCartUI() {
+
+        const count =
+            cart.reduce(
+                (total, item) =>
+                    total +
+                    Number(
+                        item.quantity || 0
+                    ),
+                0
+            );
+
+
+        [cartBadge, mobileCartBadge]
+            .forEach((badge) => {
+
+                badge.classList.toggle(
+                    "hidden",
+                    count <= 0
+                );
+
+                badge.textContent =
+                    count > 99
+                        ? "99+"
+                        : count;
+            });
+    }
+
+
+    /* =========================================================
+       TOAST
+    ========================================================= */
+
+    let toastTimer = null;
+
+
+    function showToast(message) {
+
+        toastText.textContent =
+            message;
+
+        toast.classList.add(
+            "show"
+        );
+
+
+        clearTimeout(
+            toastTimer
+        );
+
+
+        toastTimer =
+            setTimeout(
+                () => {
+
+                    toast.classList.remove(
+                        "show"
+                    );
+
+                },
+                2200
+            );
+    }
+
+
+    /* =========================================================
+       UI STATES
+    ========================================================= */
+
+    function showLoading() {
+
+        loadingGrid.classList.remove(
+            "hidden"
+        );
+
+        productsGrid.classList.add(
+            "hidden"
+        );
+
+        emptyState.classList.add(
+            "hidden"
+        );
+
+        errorState.classList.add(
+            "hidden"
+        );
+    }
+
+
+    function showError() {
+
+        loadingGrid.classList.add(
+            "hidden"
+        );
+
+        productsGrid.classList.add(
+            "hidden"
+        );
+
+        emptyState.classList.add(
+            "hidden"
+        );
+
+        errorState.classList.remove(
+            "hidden"
+        );
+    }
+
+
+    /* =========================================================
+       NAVIGATION
+    ========================================================= */
+
+    document
+        .getElementById("retryButton")
+        .addEventListener(
+            "click",
+            loadProducts
+        );
+
+
+    document
+        .getElementById("cartButton")
+        .addEventListener(
+            "click",
+            () => {
+                window.location.href =
+                    "cart.html";
+            }
+        );
+
+
+    document
+        .getElementById("mobileCartButton")
+        .addEventListener(
+            "click",
+            () => {
+                window.location.href =
+                    "cart.html";
+            }
+        );
+
+
+    document
+        .getElementById("accountButton")
+        .addEventListener(
+            "click",
+            () => {
+                window.location.href =
+                    "account.html";
+            }
+        );
+
+
+    document
+        .getElementById("mobileAccountButton")
+        .addEventListener(
+            "click",
+            () => {
+                window.location.href =
+                    "account.html";
+            }
+        );
+
+
+    document
+        .getElementById("mobileSearchButton")
+        .addEventListener(
+            "click",
+            () => {
+
+                mobileSearch.focus();
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }
+        );
+
+
+    document
+        .getElementById("shopNowButton")
+        .addEventListener(
+            "click",
+            () => {
+
+                document
+                    .getElementById(
+                        "productsSection"
+                    )
+                    .scrollIntoView({
+                        behavior: "smooth"
+                    });
+            }
+        );
+
+
+    document
+        .querySelector(
+            '[data-nav="home"]'
+        )
+        .addEventListener(
+            "click",
+            () => {
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }
+        );
+
+
+    /* =========================================================
+       BASIC UI PROTECTION
+    ========================================================= */
+
+    document.addEventListener(
+        "contextmenu",
+        (event) => {
+            event.preventDefault();
+        }
+    );
+
+
+    document.addEventListener(
+        "dragstart",
+        (event) => {
+            event.preventDefault();
+        }
+    );
+
+
+    document.addEventListener(
+        "selectstart",
+        (event) => {
+
+            const tag =
+                event.target?.tagName;
+
+            if (
+                tag !== "INPUT" &&
+                tag !== "TEXTAREA"
+            ) {
+                event.preventDefault();
+            }
+        }
+    );
+
+
+    document.addEventListener(
+        "keydown",
+        (event) => {
+
+            const key =
+                event.key.toLowerCase();
+
+            const activeTag =
+                document.activeElement?.tagName;
+
+
+            const editable =
+                activeTag === "INPUT" ||
+                activeTag === "TEXTAREA";
+
+
+            if (
+                !editable &&
+                (event.ctrlKey ||
+                 event.metaKey) &&
+                ["c", "u", "s", "a"].includes(key)
+            ) {
+                event.preventDefault();
+            }
+
+
+            if (
+                !editable &&
+                event.key === "F12"
+            ) {
+                event.preventDefault();
+            }
+        }
+    );
+</script>
+
+</body>
+</html>
