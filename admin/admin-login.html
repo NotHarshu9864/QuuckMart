@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#070b14">
+<title>QuickMart — Admin Login</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;margin:0}
+body{min-height:100vh;color:#fff;background:radial-gradient(circle at 15% 5%,rgba(37,99,235,.16),transparent 30%),radial-gradient(circle at 90% 90%,rgba(124,58,237,.12),transparent 30%),#070b14;font-family:Inter,system-ui,sans-serif;user-select:none;-webkit-user-select:none}
+input{user-select:text;-webkit-user-select:text}
+.glass{background:rgba(15,23,42,.72);border:1px solid rgba(255,255,255,.075);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.field{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.08);outline:none;transition:.2s}
+.field:focus{border-color:rgba(59,130,246,.65);box-shadow:0 0 0 3px rgba(59,130,246,.08)}
+.field::placeholder{color:#64748b}
+.primary{background:#2563eb;transition:.2s}.primary:hover{background:#3b82f6}.primary:disabled{opacity:.55}
+</style>
+</head>
+<body class="flex items-center justify-center px-4 py-8">
+<main class="w-full max-w-md">
+<div class="text-center mb-7">
+<div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl overflow-hidden border border-white/10 mb-4">
+<img src="https://i.ibb.co/PZkRpfGx/image.png" alt="QuickMart" class="w-full h-full object-cover" draggable="false">
+</div>
+<div class="text-[10px] uppercase tracking-[.22em] text-blue-400 font-semibold">QuickMart Administration</div>
+<h1 class="text-2xl sm:text-3xl font-bold tracking-tight mt-2">Admin Login</h1>
+<p class="text-sm text-slate-500 mt-2">Sign in with an authorized administrator account.</p>
+</div>
+
+<section class="glass rounded-3xl p-5 sm:p-7 shadow-2xl">
+<div id="errorBox" class="hidden mb-4 rounded-xl border border-red-500/15 bg-red-500/10 px-4 py-3 text-sm text-red-300"></div>
+<div id="successBox" class="hidden mb-4 rounded-xl border border-emerald-500/15 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300"></div>
+
+<form id="adminLoginForm" novalidate>
+<label class="block text-xs font-medium text-slate-300 mb-2" for="email">Admin email</label>
+<input id="email" type="email" autocomplete="username" class="field w-full h-12 rounded-xl px-4 text-sm text-white mb-4" placeholder="admin@example.com" required>
+
+<label class="block text-xs font-medium text-slate-300 mb-2" for="password">Password</label>
+<input id="password" type="password" autocomplete="current-password" class="field w-full h-12 rounded-xl px-4 text-sm text-white mb-5" placeholder="Enter admin password" required>
+
+<button id="loginButton" type="submit" class="primary w-full h-12 rounded-xl text-sm font-semibold">
+<span id="loginText">Sign in to Admin Panel</span>
+</button>
+</form>
+
+<div class="mt-5 pt-5 border-t border-white/[.06] text-center">
+<a href="index.html" class="text-xs text-slate-500 hover:text-slate-300">Return to QuickMart</a>
+</div>
+</section>
+<p class="text-center text-[10px] text-slate-600 mt-5">Authorized administrators only</p>
+</main>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {getAuth,setPersistence,browserLocalPersistence,onAuthStateChanged,signInWithEmailAndPassword,signOut} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {getFirestore,doc,getDoc} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBW83KNFkARuubDtjC0kgy9cBU99GQCsIQ",
+authDomain:"imkrishna.firebaseapp.com",
+projectId:"imkrishna",
+storageBucket:"imkrishna.firebasestorage.app",
+messagingSenderId:"66739016952",
+appId:"1:66739016952:web:a02c18cb7fe85b763cd70d"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+
+const form=document.getElementById("adminLoginForm");
+const email=document.getElementById("email");
+const password=document.getElementById("password");
+const button=document.getElementById("loginButton");
+const text=document.getElementById("loginText");
+const errorBox=document.getElementById("errorBox");
+const successBox=document.getElementById("successBox");
+
+function error(message){
+errorBox.textContent=message;
+errorBox.classList.remove("hidden");
+successBox.classList.add("hidden");
+}
+function success(message){
+successBox.textContent=message;
+successBox.classList.remove("hidden");
+errorBox.classList.add("hidden");
+}
+async function isAdmin(user){
+const snap=await getDoc(doc(db,"admins",user.uid));
+return snap.exists() && snap.data().active===true;
+}
+
+/*
+ADMIN AUTHORIZATION STRUCTURE
+
+Firestore:
+admins/{USER_UID}
+{
+  active: true,
+  email: "admin@example.com"
+}
+
+The browser check is only for UI/navigation.
+Firestore Security Rules must also enforce this server-side.
+*/
+
+await setPersistence(auth,browserLocalPersistence);
+
+onAuthStateChanged(auth,async user=>{
+if(!user)return;
+try{
+if(await isAdmin(user)){
+window.location.replace("admin.html");
+}else{
+await signOut(auth);
+}
+}catch(e){console.error(e);}
+});
+
+form.addEventListener("submit",async e=>{
+e.preventDefault();
+errorBox.classList.add("hidden");
+successBox.classList.add("hidden");
+
+const mail=email.value.trim();
+const pass=password.value;
+if(!mail||!pass){error("Please enter your admin email and password.");return;}
+
+button.disabled=true;
+text.textContent="Checking admin access...";
+
+try{
+const result=await signInWithEmailAndPassword(auth,mail,pass);
+
+if(!(await isAdmin(result.user))){
+await signOut(auth);
+throw new Error("This account is not authorized to access the QuickMart Admin Panel.");
+}
+
+success("Admin access verified. Opening dashboard...");
+setTimeout(()=>window.location.replace("admin.html"),400);
+
+}catch(e){
+console.error(e);
+let msg="Unable to sign in. Please check your credentials.";
+if(e.code==="auth/invalid-credential"||e.code==="auth/wrong-password"||e.code==="auth/user-not-found")msg="Invalid admin email or password.";
+else if(e.code==="auth/too-many-requests")msg="Too many attempts. Please try again later.";
+else if(e.code==="auth/network-request-failed")msg="Network error. Check your internet connection.";
+else if(e.message.includes("not authorized"))msg=e.message;
+error(msg);
+button.disabled=false;
+text.textContent="Sign in to Admin Panel";
+}
+});
+
+document.addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("dragstart",e=>e.preventDefault());
+document.addEventListener("selectstart",e=>{
+if(!["INPUT","TEXTAREA"].includes(e.target.tagName))e.preventDefault();
+});
+</script>
+</body>
+</html>
