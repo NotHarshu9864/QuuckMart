@@ -111,13 +111,35 @@ await setPersistence(auth,browserLocalPersistence);
 
 onAuthStateChanged(auth,async user=>{
 if(!user)return;
+
 try{
-if(await isAdmin(user)){
-window.location.replace("admin.html");
-}else{
-await signOut(auth);
+    /*
+      The user is already authenticated on QuickMart.
+      Do NOT ask for the password again.
+
+      We only need to verify that this Firebase UID exists
+      in the admins collection and has active: true.
+    */
+    button.disabled=true;
+    text.textContent="Verifying admin access...";
+
+    const authorized=await isAdmin(user);
+
+    if(authorized){
+        window.location.replace("admin.html");
+        return;
+    }
+
+    await signOut(auth);
+    button.disabled=false;
+    text.textContent="Sign in to Admin Panel";
+    error("Your QuickMart account is logged in, but it is not authorized as an administrator.");
+}catch(e){
+    console.error("Admin authorization error:",e);
+    button.disabled=false;
+    text.textContent="Sign in to Admin Panel";
+    error("Could not verify administrator access. Please check the admins/{UID} Firestore document.");
 }
-}catch(e){console.error(e);}
 });
 
 form.addEventListener("submit",async e=>{
@@ -133,11 +155,21 @@ button.disabled=true;
 text.textContent="Checking admin access...";
 
 try{
-const result=await signInWithEmailAndPassword(auth,mail,pass);
+let user=auth.currentUser;
 
-if(!(await isAdmin(result.user))){
-await signOut(auth);
-throw new Error("This account is not authorized to access the QuickMart Admin Panel.");
+/*
+  If the user is already logged into QuickMart, use that
+  authenticated Firebase session. Otherwise perform a normal
+  Firebase email/password sign-in.
+*/
+if(!user){
+    const result=await signInWithEmailAndPassword(auth,mail,pass);
+    user=result.user;
+}
+
+if(!(await isAdmin(user))){
+    await signOut(auth);
+    throw new Error("This account is not authorized to access the QuickMart Admin Panel.");
 }
 
 success("Admin access verified. Opening dashboard...");
